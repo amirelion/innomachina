@@ -1,6 +1,6 @@
 # Innomachina UI
 
-Interactive visual components system built with React, TypeScript, and modern UI libraries.
+A standalone interactive visual components system built with React, TypeScript, and modern UI libraries. This is a fully functional demo app with no backend dependencies.
 
 ## Features
 
@@ -54,17 +54,16 @@ All interactive components are located in `src/components/`:
 - `GraphBuilder.tsx` - React Flow graph editor
 - `DiceWidget.tsx` - Floating dice widget
 
-### Integration Layer
+### Demo Data
 
-The `src/actions.ts` file contains stubs for Base44 integration:
+The `src/demoData.ts` file contains sample data for the standalone app:
 
-- `loadWorld()` - Load world regions
-- `loadRegion(id)` - Load region items
-- `openItem(id)` - Open specific item
-- `saveItem(payload)` - Save item data
-- `listGrid(query)` - List grid items
+- `demoRegions` - 6 sample world regions with different colors and positions
+- `regionItems` - Sample items for each region
+- `getRegionItems(id)` - Helper to fetch items for a specific region
+- `getRegionName(id)` - Helper to get the display name of a region
 
-These stubs should be wired to your actual backend/Base44 implementation.
+All data is stored in-memory. Modify this file to customize your demo content.
 
 ### Type Definitions
 
@@ -89,11 +88,73 @@ Common UI types are defined in `src/ui-types.ts`:
 - **html2pdf.js** - PDF export
 - **react-hot-toast** - Notifications
 
-## Sound Assets
+## Sound Assets (Optional)
 
-Place sound files in `public/sounds/`:
-- `ambient.mp3` - Background ambient loop
-- `dice.mp3` - Dice roll sound effect
+Place sound files in `public/sounds/` to enable audio features:
+- `ambient.mp3` - Background ambient loop for SocialHub
+- `dice.mp3` - Dice roll sound effect for DiceWidget
+
+The app will work without these files, but audio features will be silent.
+
+## Features Overview
+
+### WorldCanvas
+- Zoomable canvas using Pixi.js and pixi-viewport
+- Drag, pinch, and mouse wheel navigation
+- 6 colored region bubbles with hover effects
+- Click any region to view its contents
+
+### RegionSurface
+- Two-column layout showing region details
+- Left sidebar lists all items in the region
+- Click any item to open it in the Workspace
+- Back button returns to World view
+
+### Workspace
+- Focused editing environment for individual items
+- Save button with toast notification
+- Right panel for future extensions
+- Back button returns to Region view
+
+### Board
+- Kanban-style three-column layout
+- Drag and drop cards between columns (dnd-kit)
+- Double-click cards to open in Workspace
+- Demo data includes sample cards
+
+### VaultGrid
+- Virtualized grid rendering 90 sample items
+- Efficient scrolling with TanStack Virtual
+- PDF export button on each card
+- Three-column responsive layout
+
+### SocialHub
+- Social feed interface with post cards
+- Reaction buttons (like, comment, star)
+- Ambient audio loop (optional)
+- Sample posts included
+
+### GraphBuilder
+- Interactive node/edge graph editor
+- Drag nodes to reposition
+- Connect nodes by dragging edges
+- MiniMap and zoom controls
+- Built with React Flow
+
+### DiceWidget
+- Floating widget in bottom-right corner
+- Three dice types with random outputs
+- Sound effects on roll (optional)
+- Toast notifications with results
+
+## Customization
+
+To customize the demo data:
+
+1. Edit `src/demoData.ts` to modify regions and items
+2. Update region colors, positions, and metadata
+3. Add or remove items from any region
+4. All changes are reflected immediately in the app
 
 ## License
 

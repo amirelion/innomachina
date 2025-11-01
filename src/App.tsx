@@ -1,4 +1,5 @@
 import { useState } from "react";
+import toast from "react-hot-toast";
 import WorldCanvas from "./components/WorldCanvas";
 import RegionSurface from "./components/RegionSurface";
 import Workspace from "./components/Workspace";
@@ -7,6 +8,7 @@ import VaultGrid from "./components/VaultGrid";
 import SocialHub from "./components/SocialHub";
 import GraphBuilder from "./components/GraphBuilder";
 import DiceWidget from "./components/DiceWidget";
+import { demoRegions, getRegionItems } from "./demoData";
 
 type Screen = "world"|"region"|"workspace"|"board"|"vault"|"social"|"graph";
 
@@ -15,10 +17,15 @@ export default function App() {
   const [activeRegion, setActiveRegion] = useState<string|undefined>();
   const [activeItem, setActiveItem] = useState<string|undefined>();
 
+  const handleSave = (payload: { itemId: string; data: any }) => {
+    console.log("Saving item:", payload);
+    toast.success(`Saved item: ${payload.itemId}`);
+  };
+
   return (
     <div className="h-full flex flex-col bg-neutral-950 text-neutral-100">
       <header className="flex items-center gap-2 p-3 border-b border-neutral-800">
-        <div className="font-semibold tracking-wide">UI Shell</div>
+        <div className="font-semibold tracking-wide">Innomachina UI</div>
         <nav className="ml-auto flex gap-2">
           <Btn onClick={()=>setScreen("world")}>World</Btn>
           <Btn onClick={()=>setScreen("board")}>Board</Btn>
@@ -31,7 +38,7 @@ export default function App() {
       <main className="flex-1 relative overflow-hidden">
         {screen==="world" && (
           <WorldCanvas
-            regions={[ /* inject from Base44 later */ ]}
+            regions={demoRegions}
             onRegionClick={(id)=>{ setActiveRegion(id); setScreen("region"); }}
             onReady={()=>{/* optional */}}
           />
@@ -39,7 +46,7 @@ export default function App() {
         {screen==="region" && (
           <RegionSurface
             regionId={activeRegion!}
-            items={[ /* inject later */ ]}
+            items={getRegionItems(activeRegion!)}
             onItemOpen={(id)=>{ setActiveItem(id); setScreen("workspace"); }}
             onBack={()=>setScreen("world")}
           />
@@ -47,7 +54,7 @@ export default function App() {
         {screen==="workspace" && (
           <Workspace
             itemId={activeItem!}
-            onSave={(payload)=>{ /* persist via Base44 action */ }}
+            onSave={handleSave}
             onBack={()=>setScreen("region")}
           />
         )}
@@ -55,7 +62,7 @@ export default function App() {
         {screen==="vault" && <VaultGrid onOpen={(id)=>{ setActiveItem(id); setScreen("workspace"); }} />}
         {screen==="social" && <SocialHub />}
         {screen==="graph" && <GraphBuilder />}
-        <DiceWidget onRoll={(type, value)=>{/* surface suggestion hook */}} />
+        <DiceWidget onRoll={(type, value)=>{ console.log(`Dice rolled: ${type} = ${value}`); }} />
       </main>
     </div>
   );
