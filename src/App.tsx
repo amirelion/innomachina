@@ -8,7 +8,8 @@ import VaultGrid from "./components/VaultGrid";
 import SocialHub from "./components/SocialHub";
 import GraphBuilder from "./components/GraphBuilder";
 import DiceWidget from "./components/DiceWidget";
-import { demoRegions, getRegionItems } from "./demoData";
+import DataManager from "./components/DataManager";
+import { useRegions, useRegionItems } from "./hooks/useData";
 
 type Screen = "world"|"region"|"workspace"|"board"|"vault"|"social"|"graph";
 
@@ -16,6 +17,11 @@ export default function App() {
   const [screen, setScreen] = useState<Screen>("world");
   const [activeRegion, setActiveRegion] = useState<string|undefined>();
   const [activeItem, setActiveItem] = useState<string|undefined>();
+  const [showDataManager, setShowDataManager] = useState(false);
+
+  // Use hooks for reactive data management
+  const { regions } = useRegions();
+  const { items } = useRegionItems(activeRegion);
 
   const handleSave = (payload: { itemId: string; data: any }) => {
     console.log("Saving item:", payload);
@@ -32,13 +38,20 @@ export default function App() {
           <Btn onClick={()=>setScreen("vault")}>Vault</Btn>
           <Btn onClick={()=>setScreen("social")}>Social</Btn>
           <Btn onClick={()=>setScreen("graph")}>Graph</Btn>
+          <button
+            onClick={()=>setShowDataManager(true)}
+            className="rounded-lg bg-emerald-700/60 hover:bg-emerald-600/70 px-3 py-1.5"
+            title="Manage Data"
+          >
+            ⚙️ Data
+          </button>
         </nav>
       </header>
 
       <main className="flex-1 relative overflow-hidden">
         {screen==="world" && (
           <WorldCanvas
-            regions={demoRegions}
+            regions={regions}
             onRegionClick={(id)=>{ setActiveRegion(id); setScreen("region"); }}
             onReady={()=>{/* optional */}}
           />
@@ -46,7 +59,7 @@ export default function App() {
         {screen==="region" && (
           <RegionSurface
             regionId={activeRegion!}
-            items={getRegionItems(activeRegion!)}
+            items={items}
             onItemOpen={(id)=>{ setActiveItem(id); setScreen("workspace"); }}
             onBack={()=>setScreen("world")}
           />
@@ -63,6 +76,7 @@ export default function App() {
         {screen==="social" && <SocialHub />}
         {screen==="graph" && <GraphBuilder />}
         <DiceWidget onRoll={(type, value)=>{ console.log(`Dice rolled: ${type} = ${value}`); }} />
+        {showDataManager && <DataManager onClose={() => setShowDataManager(false)} />}
       </main>
     </div>
   );
